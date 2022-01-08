@@ -1,0 +1,55 @@
+name: v2rayfree
+
+on:
+  repository_dispatch:
+  workflow_dispatch:
+  schedule:
+    - cron: '5 12,0 * * *'
+  watch:
+    types: started
+    
+env:
+  SETUP: ${{ secrets.SETUP }}
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        steps:
+            - name: Checkout codes
+              uses: actions/checkout@v2 
+            - name: Use Node.js
+              uses: actions/setup-node@v1
+              with:
+                node-version: '12.x'
+            - name: Cache node_modules
+              uses: actions/cache@v2 # 使用 GitHub 官方的缓存 Action。
+              env:
+                cache-name: cache-node-modules
+              with:
+                path: node_modules
+                key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('package-lock.json') }} # 使用 package-lock.json 的 Hash 作为缓存的 key。也可以使用 package.json 代替    
+            - name: Run install
+              run: npm install
+            - name: Run Script
+              run: node v2rayfree.js # > report2.txt       
+            - name: Pushes to another repository
+              id: push_directory
+              uses: cpina/github-action-push-to-another-repository@main
+              env:
+                API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+              with:
+                source-directory: 'output'
+                destination-github-username: 'aiboboxx'
+                destination-repository-name: 'v2rayfree'
+                user-email: aiboboxx@gmail.com
+                commit-message: update
+                target-branch: main      
+            - name: Commit report
+              run: |
+                echo  "v2rayfree运行时间：`date '+%Y%m%d %H%M%S'`" > report.txt   
+                git config --global user.name 'coolliubo'
+                git config --global user.email 'coolliubo@gmail.com'
+                git commit -am "Automated report $(date '+%Y/%m/%d')"
+                git push
+              
