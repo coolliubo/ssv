@@ -1,12 +1,13 @@
 const fs = require("fs")
 const crypto = require('crypto');
 //const sqlite = require('./asqlite3.js')
+const puppeteer = require('puppeteer')
 const core = require('@actions/core')
 const github = require('@actions/github')
-const puppeteer = require('puppeteer-extra')
+/* const puppeteer = require('puppeteer-extra');
 // add stealth plugin and use defaults (all evasion techniques)
-const StealthPlugin = require('puppeteer-extra-plugin-stealth')
-puppeteer.use(StealthPlugin())
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+puppeteer.use(StealthPlugin()); */
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString, md5,  waitForString } = require('./common.js')
 const { changeContent,cutStrin,filterContent} = require('./utils.js')
 Date.prototype.format = tFormat
@@ -54,8 +55,9 @@ async function postArticles(row,page) {
   //await page.type('#title',row.title)
   //await page.$eval('#title', el => el.value = row.title) //出错，不能使用node环境中的变量
   await page.evaluate((selecter,text) => document.querySelector(selecter).value=text,'#title',row.title)
+  await page.evaluate((selecter) => document.querySelector(selecter).click(),'#content-html')
   //await page.$eval('#content', el => el.value = '')
-  //await sleep(100)
+  await sleep(100)
   //await page.$eval('#content', el => el.value = row.content+'<p>[rihide]</p>'+row.vip+'<p>[/rihide]</p>')
   if (row.vip)  content = content + '<p>[rihide]</p>'+row.vip+'<p>[/rihide]</p>'
   if (row.video) content = `[mine_video type="mp4" vid="${row.video}"][/mine_video]`+content
@@ -86,22 +88,16 @@ async function postArticles(row,page) {
 }
 async function  main () {
     //console.log(await sqlite.open('./ssv.db'))
-  browser = await puppeteer.launch({
-    headless: runId ? true : false,
-    args: [
-      '--window-size=1920,1080',
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-blink-features=AutomationControlled',
-      //setup.proxy.normal
-      //setup.proxyL
-    ],
-    defaultViewport: null,
-    ignoreHTTPSErrors: true
-  })
+    browser = await puppeteer.launch({
+      headless: runId ? true : false,
+      //headless: true,
+      args: ['--window-size=1920,1080'],
+      defaultViewport: null,
+      ignoreHTTPSErrors: true,
+    })
   //console.log(await sqlite.open('./freeok.db'))
   const page = await browser.newPage()
-  await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36')
+  //await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36')
   //await page.authenticate({username:setup.proxy.usr, password:setup.proxy.pwd});
   page.on('dialog', async dialog => {
     //console.info(`➞ ${dialog.message()}`);
@@ -126,12 +122,12 @@ async function  main () {
     await sleep(300)
     console.log(`*****************开始postArticles ${Date()}*******************\n`)
     //let sql = "SELECT * FROM freeok WHERE level IS NULL  and (level_end_time < datetime('now') or level_end_time IS NULL);"
-    let sql = "SELECT * FROM articles WHERE posted = 0  order by  date asc limit 1 ;"
+    let sql = "SELECT * FROM articles WHERE posted = 0  order by  date asc limit 10 ;"
     //let sql = "SELECT * FROM articles WHERE posted = 1 limit 1;"
   let r = await pool.query(sql)
     let i = 0
-    console.log(`共有${r.length}个文章要发布`)
-    for (let row of r) {
+    console.log(`共有${r[0].length}个文章要发布`)
+    for (let row of r[0]) {
       i++
       console.log(i, row.url)
       if (i % 3 == 0) await sleep(500).then(()=>console.log('暂停3秒！'))

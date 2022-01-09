@@ -62,7 +62,7 @@ async function postArticles(row,page) {
    .catch(async (error)=>{
     console.log('再次点击')
     await page.click('#publish')
-    await waitForString(page,'#message > p','文章已更新',30000)
+    await waitForString(page,'#message > p','查看文章',30000)
   }) 
   await sleep(100)
   await page.waitForSelector('#sample-permalink', { visible:true,  timeout: 15000 })
@@ -72,13 +72,13 @@ async function postArticles(row,page) {
 }
 async function  main () {
     console.log(await sqlite.open('./ssv.db'))
-    const browser = await puppeteer.launch({
-      //headless: runId ? true : false,
-      headless: true,
+    browser = await puppeteer.launch({
+      headless: runId ? true : false,
+      //headless: true,
       args: ['--window-size=1920,1080'],
       defaultViewport: null,
       ignoreHTTPSErrors: true,
-    });
+    })
     const page = await browser.newPage();
     // 当页面中的脚本使用“alert”、“prompt”、“confirm”或“beforeunload”时发出
     page.on('dialog', async dialog => {
@@ -104,7 +104,7 @@ async function  main () {
     await sleep(300)
     console.log(`*****************开始postArticles ${Date()}*******************\n`);  
     //let sql = "SELECT * FROM freeok WHERE level IS NULL  and (level_end_time < datetime('now') or level_end_time IS NULL);"
-    let sql = "SELECT * FROM articles WHERE posted = 0  order by  date asc limit 50 ;"
+    let sql = "SELECT * FROM articles WHERE posted = 0  order by  date asc limit 1 ;"
     //let sql = "SELECT * FROM articles WHERE posted = 1 limit 1;"
     let r = await sqlite.all(sql, []);
     let i = 0;

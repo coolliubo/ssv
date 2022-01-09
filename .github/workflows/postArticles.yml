@@ -1,10 +1,10 @@
-name: v2rayfree
+name: postArticles
 
 on:
   repository_dispatch:
   workflow_dispatch:
   schedule:
-    - cron: '5 12,0 * * *'
+    - cron: '5 0 * * *'
   watch:
     types: started
     
@@ -32,22 +32,10 @@ jobs:
             - name: Run install
               run: npm install
             - name: Run Script
-              run: node v2rayfree.js # > report2.txt       
-            - name: Pushes to another repository
-              id: push_directory
-              uses: cpina/github-action-push-to-another-repository@main
-              env:
-                API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
-              with:
-                source-directory: 'output'
-                destination-github-username: 'aiboboxx'
-                destination-repository-name: 'v2rayfree'
-                user-email: aiboboxx@gmail.com
-                commit-message: update
-                target-branch: main      
+              run: node postArticles.js # > report2.txt       
             - name: Commit report
               run: |
-                echo  "v2rayfree运行时间：`date '+%Y%m%d %H%M%S'`" > report.txt   
+                echo  "postArticles运行时间：`date '+%Y%m%d %H%M%S'`" > report.txt   
                 git config --global user.name 'coolliubo'
                 git config --global user.email 'coolliubo@gmail.com'
                 git commit -am "Automated report $(date '+%Y/%m/%d')"

@@ -71,8 +71,8 @@ exports.waitForString = async function waitForString(page, selecter, string, tim
     (selecter, string) => {
       //await exports.sleep(300)
       if (document.querySelector(selecter)) {
-        //console.log("body",document.querySelector('body').innerText);
-        return document.querySelector(selecter).innerText.includes(string);
+        //console.log("body",document.querySelector('body').innerHTML);
+        return document.querySelector(selecter).innerHTML.includes(string);
       } else {
         return false;
       }

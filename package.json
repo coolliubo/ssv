@@ -20,9 +20,10 @@
     "@actions/core": "^1.2.7",
     "@actions/github": "^4.0.0",
     "crypto": "^1.0.1",
+    "mysql2": "^2.3.3",
     "puppeteer": "^9.1.1",
     "puppeteer-extra": "^3.2.3",
-    "puppeteer-extra-plugin-stealth": "^2.8.1",
+    "puppeteer-extra-plugin-stealth": "^2.9.0",
     "sqlite3": "^5.0.2"
   }
 }
