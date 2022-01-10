@@ -78,7 +78,7 @@ async function postArticles(row,page) {
    .catch(async (error)=>{
     console.log('再次点击')
     await page.click('#publish')
-    await waitForString(page,'#message > p','文章已更新',30000)
+    await waitForString(page,'#message > p','查看文章',30000)
   }) 
   await sleep(100)
   await page.waitForSelector('#sample-permalink', { visible:true,  timeout: 15000 })

@@ -33,11 +33,11 @@ jobs:
               run: npm install
             - name: Run Script
               run: node postArticles.js # > report2.txt       
-            - name: Commit report
-              run: |
-                echo  "postArticles运行时间：`date '+%Y%m%d %H%M%S'`" > report.txt   
-                git config --global user.name 'coolliubo'
-                git config --global user.email 'coolliubo@gmail.com'
-                git commit -am "Automated report $(date '+%Y/%m/%d')"
-                git push
+            # - name: Commit report
+            #   run: |
+            #     echo  "postArticles运行时间：`date '+%Y%m%d %H%M%S'`" > report.txt   
+            #     git config --global user.name 'coolliubo'
+            #     git config --global user.email 'coolliubo@gmail.com'
+            #     git commit -am "Automated report $(date '+%Y/%m/%d')"
+            #     git push
               
