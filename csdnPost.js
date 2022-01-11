@@ -115,7 +115,7 @@ async function main() {
     //return Promise.reject(new Error('调试退出'))
     console.log(`*****************开始postArticles ${Date()}*******************\n`)
     //let sql = "SELECT * FROM freeok WHERE level IS NULL  and (level_end_time < datetime('now') or level_end_time IS NULL);"
-    let sql = "SELECT * FROM articles WHERE csdn = 0 and posted = 1  order by  date asc limit 5;"
+    let sql = "SELECT * FROM articles WHERE csdn = 0 and posted = 1  order by  date asc limit 8;"
     //let sql = "SELECT * FROM articles WHERE posted = 1 limit 1;"
     let r = await pool.query(sql)
     let i = 0

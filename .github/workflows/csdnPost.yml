@@ -4,7 +4,7 @@ on:
   repository_dispatch:
   workflow_dispatch:
   schedule:
-    - cron: '15 20 * * *'
+    - cron: '15 0,8,16 * * *'
   watch:
     types: started
     
@@ -14,7 +14,7 @@ env:
 jobs:
     build:
         runs-on: ubuntu-latest
-        timeout-minutes: 10
+        timeout-minutes: 15
         steps:
             - name: Checkout codes
               uses: actions/checkout@v2 
