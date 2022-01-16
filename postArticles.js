@@ -1,5 +1,5 @@
 const fs = require("fs")
-const crypto = require('crypto');
+//const crypto = require('crypto');
 //const sqlite = require('./asqlite3.js')
 const puppeteer = require('puppeteer')
 const core = require('@actions/core')
@@ -36,6 +36,7 @@ async function postArticles(row,page) {
   //fs.writeFileSync('./title.html',row.content )
   let update = false 
   let content = row.content
+  content = content.replace(/www.cmdw.top/g,'www.kxnn.xyz')
   //let video = ''
   //({content,video} = filterContent(content)) */
   //row.vip = row.vip.replace('天赠品链接','赠品链接')
@@ -122,7 +123,7 @@ async function  main () {
     await sleep(300)
     console.log(`*****************开始postArticles ${Date()}*******************\n`)
     //let sql = "SELECT * FROM freeok WHERE level IS NULL  and (level_end_time < datetime('now') or level_end_time IS NULL);"
-    let sql = "SELECT * FROM articles WHERE posted = 0  order by  date asc limit 10 ;"
+    let sql = "SELECT * FROM articles WHERE posted = 0  order by  date asc limit 50 ;"
     //let sql = "SELECT * FROM articles WHERE posted = 1 limit 1;"
   let r = await pool.query(sql)
     let i = 0
