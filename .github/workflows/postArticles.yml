@@ -3,8 +3,8 @@ name: postArticles
 on:
   repository_dispatch:
   workflow_dispatch:
-  schedule:
-    - cron: '5 0 * * *'
+  #schedule:
+  #  - cron: '5 0 * * *'
   watch:
     types: started
     
@@ -21,7 +21,7 @@ jobs:
             - name: Use Node.js
               uses: actions/setup-node@v1
               with:
-                node-version: '12.x'
+                node-version: '16.x'
             - name: Cache node_modules
               uses: actions/cache@v2 # 使用 GitHub 官方的缓存 Action。
               env:
