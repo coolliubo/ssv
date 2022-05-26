@@ -3,8 +3,8 @@ name: postArticles
 on:
   repository_dispatch:
   workflow_dispatch:
-  #schedule:
-  #  - cron: '5 0 * * *'
+  schedule:
+    - cron: '5 0 * * *'
   watch:
     types: started
     
