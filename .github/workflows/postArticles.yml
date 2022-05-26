@@ -31,13 +31,17 @@ jobs:
                 key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('package-lock.json') }} # 使用 package-lock.json 的 Hash 作为缓存的 key。也可以使用 package.json 代替    
             - name: Run install
               run: npm install
-            - name: Run Script
-              run: node postArticles.js # > report2.txt       
-            # - name: Commit report
-            #   run: |
-            #     echo  "postArticles运行时间：`date '+%Y%m%d %H%M%S'`" > report.txt   
-            #     git config --global user.name 'coolliubo'
-            #     git config --global user.email 'coolliubo@gmail.com'
-            #     git commit -am "Automated report $(date '+%Y/%m/%d')"
-            #     git push
+            - name: Run crawUrls
+              run: node crawUrls.js    
+            - name: Run crawlArticles
+              run: node crawlArticles.js # > report2.txt              
+            - name: Run postArticles
+              run: node postArticles.js # > report2.txt                     
+            - name: Commit report
+              run: |
+                echo  "postArticles运行时间：`date '+%Y%m%d %H%M%S'`" > report.txt   
+                git config --global user.name 'coolliubo'
+                git config --global user.email 'coolliubo@gmail.com'
+                git commit -am "Automated report $(date '+%Y/%m/%d')"
+                git push
               

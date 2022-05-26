@@ -32,11 +32,11 @@ const pool = mysql.createPool({
 });
 
 async function postArticles(row,page) {
-  //console.log(row)
+  //console.log(row.content)
   //fs.writeFileSync('./title.html',row.content )
   let update = false 
   let content = row.content
-  content = content.replace(/www.cmdw.top/g,'www.kxnn.xyz')
+  content = content.replace(/www.cmdw.top/g,'www.kxyz.eu.org')
   //let video = ''
   //({content,video} = filterContent(content)) */
   //row.vip = row.vip.replace('天赠品链接','赠品链接')
@@ -46,9 +46,9 @@ async function postArticles(row,page) {
     update = true
     let id = row.url_kxnn.slice(row.url_kxnn.lastIndexOf('/')+1,row.url_kxnn.lastIndexOf('.'))
     //console.log(id,`https://www.kxnn.xyz/wp-admin/post.php?post=${id}&action=edit`)
-    await page.goto(`https://www.kxnn.xyz/wp-admin/post.php?post=${id}&action=edit`, { timeout: 60000 })
+    await page.goto(`https://www.kxyz.eu.org/wp-admin/post.php?post=${id}&action=edit`, { timeout: 60000 })
   } else {
-    await page.goto('https://www.kxnn.xyz/wp-admin/post-new.php', { timeout: 60000 })
+    await page.goto('https://www.kxyz.eu.org/wp-admin/post-new.php', { timeout: 60000 })
   }
   //return Promise.reject(new Error('临时退出'))
   await page.waitForSelector('#title', { timeout: 15000 })
@@ -61,16 +61,21 @@ async function postArticles(row,page) {
   await sleep(100)
   //await page.$eval('#content', el => el.value = row.content+'<p>[rihide]</p>'+row.vip+'<p>[/rihide]</p>')
   if (row.vip)  content = content + '<p>[rihide]</p>'+row.vip+'<p>[/rihide]</p>'
-  if (row.video) content = `[mine_video type="mp4" vid="${row.video}"][/mine_video]`+content
+  //if (row.video) content = `[mine_video type="mp4" vid="${row.video}"][/mine_video]`+content
   await page.evaluate((selecter,text) => document.querySelector(selecter).value=text,'#content',content)
   //await page.type('#content',row.content+'<p>[rihide]</p>'+row.vip+'<p>[/rihide]</p>')
+  await page.evaluate((selecter,text) => document.querySelector(selecter).value=text,'div#_cao_post_options > div:nth-of-type(2) > div > div > div > div > div > div > div:nth-of-type(2) > input',"2")
+  await page.evaluate((selecter,text) => document.querySelector(selecter).value=text,'div#_cao_post_options > div:nth-of-type(2) > div > div > div > div > div > div:nth-of-type(2) > div:nth-of-type(2) > input',"0")
   await sleep(200)
   await page.evaluate((selecter) => document.querySelector(selecter).checked=true,'#in-category-4')
   await sleep(200)
   await page.type('#new-tag-post_tag',row.label)
+  await sleep(200)
+  await page.click('div#post_tag > div > div:nth-of-type(2) > input:nth-of-type(2)')
   await sleep(100)
   await page.evaluate((selecter) => document.querySelector(selecter).checked=true,'#_cao_post_options > div.inside > div > div > div.csf-content > div > div > div:nth-child(5) > div.csf-fieldset > label > input.csf--checkbox')
-  await sleep(2000)
+  await sleep(200)
+
   //return Promise.reject(new Error('临时退出'))
   //await page.click('#publish')
   await page.evaluate((selecter) => document.querySelector(selecter).click(),'#publish')
@@ -92,7 +97,10 @@ async function  main () {
     browser = await puppeteer.launch({
       headless: runId ? true : false,
       //headless: true,
-      args: ['--window-size=1920,1080'],
+      args: [
+        '--window-size=1920,1080',
+        runId ? '' : setup.proxy.normal
+      ],
       defaultViewport: null,
       ignoreHTTPSErrors: true,
     })
@@ -104,7 +112,7 @@ async function  main () {
     //console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   })
-    await page.goto('https://www.kxnn.xyz/wp-login.php', { timeout: 60000 })
+    await page.goto('https://www.kxyz.eu.org/wp-login.php', { timeout: 60000 })
     //await page.click('body > header > div > ul.nav-right > li.nav-login.no > a.signin-loader > span')
     await page.waitForSelector('#user_login', { timeout: 15000 })
     await sleep(200)
@@ -123,7 +131,7 @@ async function  main () {
     await sleep(300)
     console.log(`*****************开始postArticles ${Date()}*******************\n`)
     //let sql = "SELECT * FROM freeok WHERE level IS NULL  and (level_end_time < datetime('now') or level_end_time IS NULL);"
-    let sql = "SELECT * FROM articles WHERE posted = 0  order by  date asc limit 50 ;"
+    let sql = "SELECT * FROM articles WHERE title is not null and posted is null  order by  date asc limit 10 ;"
     //let sql = "SELECT * FROM articles WHERE posted = 1 limit 1;"
   let r = await pool.query(sql)
     let i = 0
@@ -143,7 +151,7 @@ async function  main () {
           .then((result) => { console.log('changedRows', result[0].changedRows);sleep(3000); })
           .catch((error) => { console.log('UPDATEerror: ', error.message);sleep(3000); })
         })
-      .catch(error => console.log('error: ', error.message))
+      .catch(error => console.error('error: ', error.message))
      }
   await pool.end()
   if (runId ? true : false) await browser.close()

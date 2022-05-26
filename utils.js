@@ -49,12 +49,12 @@ exports.changeContent = function changeContent(content) {
     let vips = { bd: '', ty: '', zp: '' }
     //console.log(content)
     const regex = /(https?|http):\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/g
-    const vipurl = 'https://www.kxnn.xyz/vip'
+    const vipurl = 'https://www.kxyz.eu.org/vip'
     let myArray = [] 
     let result = content
     while ((myArray = regex.exec(content)) !== null) {
         //console.log(`Found ${myArray[0]}. Next starts at ${regex.lastIndex}.`)
-        if (myArray[0].includes('streamstorevip.xyz')) {
+        if (myArray[0].includes('ayxj.xyz')) {
             result = result.replace(myArray[0], vipurl)
             continue
         }
@@ -106,7 +106,7 @@ exports.changeContent = function changeContent(content) {
         video
     }
 }
-exports.cutString = function cutString(origin, preStr, aftStr, includeBorders = true) {
+function cutString(origin, preStr, aftStr, includeBorders = true) {
     let pos = origin.indexOf(preStr)
     let pos2 = origin.indexOf(aftStr, pos+preStr.length)
     //console.log(pos,pos2,origin.length)
@@ -115,6 +115,7 @@ exports.cutString = function cutString(origin, preStr, aftStr, includeBorders = 
     return origin.slice(pos + preStr.length, pos2)
     //return origin.substring(pos,pos2+aftStr.length)
 }
+exports.cutString = cutString   //要分开，因为filterContent内要用到cutString
 /*  let content = fs.readFileSync('./title.html', 'utf8')
 //let result = exports.cutString(content,'<script src="/wp-content/themes/modown/module/ckplayer','<img src="undefined"></div></div></div>');
 let cut = exports.cutString(content,'<script src="/wp-content/themes/modown/module/ckplayer','<img src="undefined"></div></div></div>')

@@ -37,9 +37,9 @@ async function crawlArticles(row,page) {
     content = content +'<br>'+ div
   }
   row.md5 = md5(content)  //原始md5值
-  let video = '';
+  let video = ''
   ({content,video} = filterContent(content))
-  let labels = await page.$$eval('body > div.main > div > div.content-wrap > div > article > div.article-tags a',
+    let labels = await page.$$eval('body > div.main > div > div.content-wrap > div > article > div.article-tags a',
     (links) => links.map((link) => link.innerText))
   console.log(labels.join(),row.url.substr(31,10))
   //fs.writeFileSync('./title.html',content )
@@ -98,7 +98,7 @@ async function crawlArticles(row,page) {
   row.vip = result.vip
   row.video = video ? video : result.video
   row.label = labels.join()
-  //row.date = row.url.substr(31,10)
+  row.date = row.url.substr(31,10)
   row.crawled = 1
   console.log (row.title,row.vip,row.md5,row.video)
   //fs.writeFileSync('./title2.html', row.content)
@@ -136,8 +136,9 @@ async function  main () {
     .then(()=>console.log ('登录成功'))
     await sleep(500)
     console.log(`*****************开始crawlArticles ${Date()}*******************\n`);  
+    //let sql = "SELECT * FROM freeok WHERE level IS NULL  and (level_end_time < datetime('now') or level_end_time IS NULL);"
     //let sql = "select * from articles where vip = '' limit 1;"
-    let sql = "select id,url from articles where crawled is null limit 10;"
+    let sql = "select id,url from articles where video is null limit 1;"
     let r = await pool.query(sql, []);
     let i = 0;
     console.log(`共有${r[0].length}个文章要爬取`);
@@ -148,13 +149,13 @@ async function  main () {
       if (row.url) await crawlArticles(row,page)
       .then(async row => {
         //console.log(row);
-        await pool.query("UPDATE articles SET title=?, content=?, vip=?, video=?, category='游戏', label=?, crawled=1, md5=?  WHERE id=?",
-                                            [row.title,row.content,row.vip,row.video,row.label,row.md5,row.id])
-        .then(async (reslut)=>{console.log('changedRows', reslut[0].changedRows);await sleep(50);})
+        await pool.query("UPDATE articles SET title=?, content=?, vip=?, video=?, category='游戏', label=?, date=?, crawled=1, md5=?  WHERE id=?",
+                                            [row.title,row.content,row.vip,row.video,row.label,row.date,row.md5,row.id])
+        .then(async (reslut)=>{console.log(reslut);await sleep(50);})
         })
       .catch(error => console.log('error: ', error.message));;
      }
-     await pool.end();
+    //sqlite.close();
     if ( runId?true:false ) await browser.close();
 }
 main();
