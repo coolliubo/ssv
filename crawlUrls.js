@@ -3,17 +3,18 @@ const fs = require("fs")
 const puppeteer = require('puppeteer');
 const core = require('@actions/core');
 const github = require('@actions/github');
-const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString, findFrames, findFrame } = require('./common.js');
+const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString, findFrames, findFrame, md5 } = require('./common.js');
 Date.prototype.format = tFormat;
 const mysql = require('mysql2/promise')
 const runId = github.context.runId;
 let browser;
-let setup = {};
+let setup = {},saved = {};
 if (!runId) {
   setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
 } else {
   setup = JSON.parse(process.env.SETUP);
 }
+saved = JSON.parse(fs.readFileSync('./saved.json', 'utf8'))
 const pool = mysql.createPool({
     host: setup.mysql.host,
     user: setup.mysql.user,
@@ -36,7 +37,16 @@ async function main() {
   });
   const page = await browser.newPage();
   await page.goto('https://ayxj.xyz/', { timeout: 60000 });
-  //let content = await page.$eval('body > div.main > div.container > div > div > div:nth-child(1)',e=>e.innerHTML);
+  let content = await page.$eval('body > div.main > div.container > div',e=>e.innerHTML);
+  //let content_md5 = md5(content)  //原始md5值
+  if (saved.content_md5 == md5(content)) {
+    console.log('content not changed');
+    await pool.end();
+    if (runId ? true : false) await browser.close()
+    return
+  }
+  saved.content_md5 = md5(content)
+  fs.writeFileSync("saved.json", JSON.stringify(saved, null, '\t'))
   //console.log(content);
   const links = await page.$$eval('#posts  a',
     (links) => links.map((link) => link.href));
