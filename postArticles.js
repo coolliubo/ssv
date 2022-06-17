@@ -64,7 +64,7 @@ async function postArticles(row,page) {
   //if (row.video) content = `[mine_video type="mp4" vid="${row.video}"][/mine_video]`+content
   await page.evaluate((selecter,text) => document.querySelector(selecter).value=text,'#content',content)
   //await page.type('#content',row.content+'<p>[rihide]</p>'+row.vip+'<p>[/rihide]</p>')
-  await page.evaluate((selecter,text) => document.querySelector(selecter).value=text,'div#_cao_post_options > div:nth-of-type(2) > div > div > div > div > div > div > div:nth-of-type(2) > input',"2")
+  await page.evaluate((selecter,text) => document.querySelector(selecter).value=text,'div#_cao_post_options > div:nth-of-type(2) > div > div > div > div > div > div > div:nth-of-type(2) > input',"3")
   await page.evaluate((selecter,text) => document.querySelector(selecter).value=text,'div#_cao_post_options > div:nth-of-type(2) > div > div > div > div > div > div:nth-of-type(2) > div:nth-of-type(2) > input',"0")
   await sleep(200)
   await page.evaluate((selecter) => document.querySelector(selecter).checked=true,'#in-category-4')
